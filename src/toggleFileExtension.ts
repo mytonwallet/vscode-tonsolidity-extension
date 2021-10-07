@@ -1,10 +1,10 @@
 'use strict';
-import { workspace, window, Range, WorkspaceEdit } from 'vscode';
+import { workspace } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-export function toggleFileExtension() {
-    workspace.findFiles('**/*.sol').then((files) => {
+export function toggleFileExtension(rootDir: string) {
+    workspace.findFiles(path.join(rootDir,'/*.sol')).then((files) => {
         if (files.length != 0) {
             for (let index in files) {
                 const filename = path.basename(files[index].fsPath);
@@ -22,7 +22,7 @@ export function toggleFileExtension() {
                 }
             }
         } else {
-            workspace.findFiles('**/*.tsol').then((files) => {
+            workspace.findFiles(path.join(rootDir,'/*.tsol')).then((files) => {
                 for(let index in files) {
                     const filename = path.basename(files[index].fsPath);
                     if (filename.substr(0, 1) != '~') {

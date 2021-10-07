@@ -1,8 +1,7 @@
 'use strict';
-import { consoleTerminal } from 'tondev';
 import { Position } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { Function, SolidityCodeWalker, Variable } from './codeWalkerService';
+import { SolidityCodeWalker, Variable } from './codeWalkerService';
 
 export class HoverService {
     

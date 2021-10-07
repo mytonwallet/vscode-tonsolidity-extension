@@ -520,7 +520,7 @@
             ]
         },
         "type-modifier-access": {
-            "match": "\\b(internal|external|private|public')\\b",
+            "match": "\\b(internal|external|private|public)\\b",
             "name": "storage.type.modifier.access"
         },
         "type-modifier-payable": {

@@ -26,8 +26,9 @@ export async function activate(context: ExtensionContext) {
         lintAndfixCurrentDocument();
     }));
 
-    context.subscriptions.push(commands.registerCommand('tonsolidity.toggleFileExtension', () => {
-        toggleFileExtension();
+    context.subscriptions.push(commands.registerCommand('tonsolidity.toggleFileExtension', (event) => {
+        const rootDir = path.dirname(event.fsPath).replace(workspace.workspaceFolders?.[0].uri.fsPath, "").substr(1);
+        toggleFileExtension(rootDir);
     }));
     
     const serverModule = path.join(__dirname, './server.js');

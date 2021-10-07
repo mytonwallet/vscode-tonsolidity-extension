@@ -99,6 +99,17 @@ For compatibility with legacy code base you can select the parser for `.sol` ext
 
 ![Screenshot legacy file extension TON Solidity vscode extension](images/legacy-file-extension.gif)
 
+## Known issues
+
+* Sometimes the compiler can't be installed by automatically.
+
+> If you note that the auto compilation is not working. Please, try to install it by manually.
+> Install tondev by this instruction https://github.com/tonlabs/tondev#installation
+> Then install all needs for compiler:
+> ```
+> tondev sol set
+> ```
+
 ## Contributing / Issues / Requests
 
 For ideas, issues, additions, modifications please raise an issue or a pull request at https://github.com/mytonwallet/vscode-tonsolidity-extension

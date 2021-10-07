@@ -13,7 +13,7 @@
     "compiler",
     "solium"
   ],
-  "version": "1.0.9",
+  "version": "1.0.11",
   "publisher": "mytonwallet",
   "license": "Apache-2.0",
   "engines": {
@@ -71,7 +71,7 @@
     "solidity-comments-extractor": "^0.0.7",
     "solium-plugin-security": "^0.1.1",
     "string-width": "^4.2.2",
-    "tondev": "^0.9.0",
+    "tondev": "^0.10.3",
     "vsce": "^1.100.1",
     "vscode-languageclient": "^6.1.4",
     "vscode-languageserver": "^6.1.1",

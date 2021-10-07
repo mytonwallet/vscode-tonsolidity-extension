@@ -1662,8 +1662,8 @@ IterationStatement
       };
     }
   / ForToken __
-    "(" __
-    __ Identifier __ update:VariableDeclarationList __ ":"
+    "(" 
+     __ "("? __ update:InformalParameterList __ ")"? __ ":"
     __ declarations:VariableDeclarationList __
     ")" __
     body:Statement
@@ -2063,7 +2063,7 @@ InformalParameter
   }
 
 InformalParameterList
-  = head:(InformalParameter / Literal) tail:( __ "," __ (InformalParameter / Literal))* {
+  = head:(InformalParameter / Literal/ __) tail:( __ "," __ (InformalParameter / Literal/ __))* {
       return buildList(head, tail, 3);
     }
 

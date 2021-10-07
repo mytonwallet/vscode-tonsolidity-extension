@@ -1,12 +1,6 @@
 'use strict';
 import * as fs from 'fs';
 import * as path from 'path';
-import Linter from './linter/linter';
-import SolhintService from './linter/solhint';
-import SoliumService from './linter/solium';
-import {CompilerError} from './solErrorsToDiagnostics';
-import {CompletionService} from './completionService';
-import {SolidityDefinitionProvider} from './definitionProvider';
 import {
     createConnection, Connection,
     IPCMessageReader, IPCMessageWriter,
@@ -15,11 +9,15 @@ import {
     CompletionItem, Location, SignatureHelp,
     TextDocumentSyncKind, HoverParams, MarkedString
 } from 'vscode-languageserver';
-import { HoverService } from './hoverService';
-
 import { TextDocument } from 'vscode-languageserver-textdocument';
-
-import {SolcCompiler} from './solcCompiler';
+import Linter from './linter/linter';
+import SolhintService from './linter/solhint';
+import SoliumService from './linter/solium';
+import { CompilerError } from './solErrorsToDiagnostics';
+import { CompletionService } from './completionService';
+import { SolidityDefinitionProvider } from './definitionProvider';
+import { HoverService } from './hoverService';
+import { SolcCompiler } from './solcCompiler';
 
 interface Settings {
     tonsolidity: SoliditySettings;
