@@ -315,18 +315,39 @@
             "name": "keyword.control.unchecked"
         },
         "control-pragma": {
-            "match": "\\b(pragma)(?:\\s+([A-Za-z_-]\\w+-\\w+)\\s+([^\\s]+))?\\b",
-            "captures": {
-                "1": {
-                    "name": "keyword.control.pragma"
+            "patterns": [
+                {
+                    "match": "(pragma) (msgValue|AbiHeader|solidity|ton-solidity|experimental)\\s?([0-9a-zA-Z_\\.\\s\\^<>=]+)\\s?(;)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.pragma"
+                        },
+                        "2": {
+                            "name": "entity.name.tag.pragma"
+                        },
+                        "3": {
+                            "name": "constant.numeric"
+                        },
+                        "4": {
+                            "name": "punctuation.terminator.statement"
+                        }
+                    }
                 },
-                "2": {
-                    "name": "entity.name.tag.pragma"
-                },
-                "3": {
-                    "name": "constant.other.pragma"
+                {
+                    "match": "(pragma) (ignoreIntOverflow)(;)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.pragma"
+                        },
+                        "2": {
+                            "name": "entity.name.tag.pragma"
+                        },
+                        "3": {
+                            "name": "punctuation.terminator.statement"
+                        }
+                    }
                 }
-            }
+            ]
         },
         "control-underscore": {
             "match": "\\b(_)\\b",
@@ -470,7 +491,7 @@
                     "name": "variable.language.builtin.abi"
                 },
                 {
-                    "match": "\\b(msg\\.sender|msg|block|tx|now)\\b",
+                    "match": "\\b(msg\\.sender|data|value|currencies|isInternal|isExternal|isTickTock|createdAt)\\b",
                     "name": "variable.language.transaction"
                 },
                 {
@@ -494,11 +515,11 @@
                     "name": "keyword.control.contract"
                 },
                 {
-                    "match": "\\b(addmod|mulmod|keccak256|sha256|sha3|ripemd160|ecrecover)\\b",
+                    "match": "\\b(uBitSize|bitSize|addmod|mulmod|sha256|sha3|ripemd160|ecrecover)\\b",
                     "name": "support.function.math"
                 },
                 {
-                    "match": "\\b(unicode)\\b",
+                    "match": "\\b(unicode|format|stoi|gasToValue|valueToGas|optional|repeat|QueryOrderBy)\\b",
                     "name": "support.function.string"
                 },
                 {
@@ -510,12 +531,8 @@
                     "name": "variable.language.type"
                 },
                 {
-                    "match": "\\b(bitSize)\\b",
-                    "name": "variable.language.type"
-                },
-                {
-                    "match": "\\b(uBitSize)\\b",
-                    "name": "variable.language.type"
+                    "match": "\\b(logtvm|receive|fallback|onBounce|onTickTock|onCodeUpgrade|afterSignatureCheck)\\b",
+                    "name": "entity.name.function"
                 }
             ]
         },
@@ -528,7 +545,7 @@
             "name": "storage.type.modifier.payable"
         },
         "type-modifier-constant": {
-            "match": "\\b(constant)\\b",
+            "match": "\\b(constant|static)\\b",
             "name": "storage.type.modifier.readonly"
         },
         "type-modifier-immutable": {
@@ -603,6 +620,9 @@
                 },
                 {
                     "include": "#declaration-storage"
+                },
+                {
+                    "include": "#declaration-debot-interface"
                 },
                 {
                     "include": "#declaration-error"
@@ -1093,6 +1113,186 @@
                 {
                     "match": "\\b(mapping)\\b",
                     "name": "storage.type.mapping"
+                }
+            ]
+        },
+        "declaration-debot-interface": {
+            "patterns": [
+                {
+                    "match": "\\b(SigningBoxInput|NumberInput|AddressInput|AmountInput|ConfirmInput|CountryInput)\\.(get)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Base64|Hex)\\.(encode|decode)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(DateTimeInput)\\.(getTime|getDate|getDateTime|getTimeZoneOffset)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Json)\\.(deserialize)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Menu)\\.(select)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Network)\\.(get|post)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(EncryptionBoxInput)\\.(getNaclSecretBox|getNaclBox|getChaCha20Box|remove|getSupportedAlgorithms)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(QRCode)\\.(read|draw)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Query)\\.(collection)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(QueryCollection|SortDirection|QueryStatus)\\.(Ascending|Descending|Messages|Accounts|Transactions|Success|FilterError|NetworkError|UnknownError)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.enum"
+                        },
+                        "2": {
+                            "name": "variable.other.enummember"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Sdk)\\.(getBalance|getAccountType|getAccountCodeHash|encrypt|decrypt|signHash|genRandom|substring|mnemonicFromRandom|mnemonicVerify|mnemonicDeriveSignKeys|hdkeyXprvFromMnemonic|hdkeyDeriveFromXprv|hdkeyDeriveFromXprvPath|hdkeySecretFromXprv|hdkeyPublicFromXprv|naclSignKeypairFromSecretKey|naclBox|naclBoxOpen|naclKeypairFromSecret|chacha20)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(SecurityCardManagement)\\.(getBlockHashes|turnOnWallet|setRecoveryData|getRecoveryData|getSerialNumber|getTonWalletAppletState|createKeyForHmac)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Terminal)\\.(input|print|printf)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(UserInfo)\\.(getAccount|getPublicKey|getSigningBox)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(Media)\\.(output)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "entity.name.function"
+                        }
+                    }
+                },
+                {
+                    "match": "\\b(AddressInput|AmountInput|Base64|ConfirmInput|CountryInput|DateTimeInput|EncryptionBoxInput|Hex|JsonDeserialize|Media|Menu|Network|NumberInput|QRCode|Query|Sdk|SecurityCardManagement|SigningBoxInput|Terminal|UserInfo)\\.(ID)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "entity.name.interface"
+                        },
+                        "2": {
+                            "name": "constant.numeric.hexadecimal"
+                        }
+                    }
                 }
             ]
         },
