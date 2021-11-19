@@ -93,6 +93,14 @@ To use this feature need to open the menu on any `folder` in your project explor
 
 ![Screenshot toggle file extension TON Solidity vscode extension](images/toggle-file-extension.gif)
 
+*Alternative solution*
+
+Create `.gitattributes` in the project root and add this content:
+
+```
+*.tsol linguist-language=Solidity
+```
+
 ## Legacy compatibility with .sol file extension
 
 For compatibility with legacy code base you can select the parser for `.sol` extension, that can be used instead Solidity language extension. By this fact you can comfortably work with the same file extension.
@@ -104,9 +112,9 @@ For compatibility with legacy code base you can select the parser for `.sol` ext
 * Sometimes the compiler can't be installed by automatically.
 
 > If you note that the auto compilation is not working. Please, try to install it by manually.
-> Install tondev by this instruction https://github.com/tonlabs/tondev#installation
+> Install `tondev` by this instruction https://github.com/tonlabs/tondev#installation
 > Then install all needs for compiler:
-> ```
+> ```console
 > tondev sol set
 > ```
 

@@ -1711,20 +1711,9 @@ function getTvmCompletionItems(): CompletionItem[] {
             label: 'buildStateInit',
         },
         {
-            detail: `Generates a persistent storage of the contract that contains only public key. data can be used to generate StateInit (TBLKCH - 3.1.7.).`,
+            detail: `Generates data field of the StateInit (TBLKCH - 3.1.7.). Parameters are the same as in tvm.buildStateInit().`,
             kind: CompletionItemKind.Property,
-            label: 'buildEmptyData',
-        },
-        {
-            detail: `Deploys a new contract and returns the address of the deployed contract. This function may be useful if you want to write a universal contract that can deploy any contract. In another cases, use Deploy via new. Arguments:
-
-            * stateInit - contract's StateInit.
-            * payload - encoded internal inbound message. This message should contain the function (constructor) id and encoded parameters of constructor.
-            * value - funds in nanotons that will be sent to the new contract address.
-            * wid - workchain id of the new contract address.
-            payload can be generated manually by tvm-linker tool.`,
-            kind: CompletionItemKind.Property,
-            label: 'deploy',
+            label: 'buildDataInit',
         },
         {
             detail: `Returns contract's code.`,

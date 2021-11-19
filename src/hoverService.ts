@@ -326,9 +326,9 @@ const hoverDescription = {
     "<TvmSlice>.hasNRefs": {
         "pattern": ".hasNRefs",
         "type": "TvmSlice",
-        "body": ".hasNRefs(${uint8 bits}))",
+        "body": ".hasNRefs(${uint8 refs}))",
         "description": [
-            "```\n<TvmSlice>.hasNRefs(uint8 bits) returns (bool);\n```\n",
+            "```\n<TvmSlice>.hasNRefs(uint8 refs) returns (bool);\n```\n",
             "Checks whether the slice contains the specified amount of references."
         ]
     },
@@ -385,7 +385,7 @@ const hoverDescription = {
         "type": "TvmSlice",
         "body": ".loadUnsigned(${1:uint16 bitSize})",
         "description": [
-            "```\n<TvmSlice>.loadSigned(uint16 bitSize) returns (uint);\n```\n",
+            "```\n<TvmSlice>.loadUnsigned(uint16 bitSize) returns (uint);\n```\n",
             "Loads an unsigned integer with the given bitSize from the slice."
         ]
     },
@@ -1451,22 +1451,13 @@ const hoverDescription = {
             "Generates a StateInit (TBLKCH - 3.1.7.) from code and data.\n"
         ]
     },
-    "tvm.buildEmptyData": {
-        "pattern": "tvm.buildEmptyData",
+    "tvm.buildDataInit": {
+        "pattern": "tvm.buildDataInit",
         "type": "global",
-        "body": "tvm.buildEmptyData(${1:uint256 publicKey})",
+        "body": "tvm.buildDataInit(${1:|{pubkey: uint256 pubkey\\, contr: contract Contract\\, varInit: {VarName0: varValue0\\, ...}}|})",
         "description": [
-            "```\ntvm.buildEmptyData(uint256 publicKey) returns (TvmCell);\n```\n",
+            "```\ntvm.buildDataInit({pubkey: uint256 pubkey, contr: contract Contract, varInit: {VarName0: varValue0, ...}});\n```\n",
             "Generates a persistent storage of the contract that contains only public key. data can be used to generate StateInit (TBLKCH - 3.1.7.).\n"
-        ]
-    },
-    "tvm.deploy": {
-        "pattern": "tvm.deploy",
-        "type": "global",
-        "body": "tvm.deploy(${1:TvmCell stateInit}, ${2:TvmCell payload}, ${3:uint128 value}, ${4:int8 wid})",
-        "description": [
-            "```\nreturns(address);\n```\n",
-            "Deploys a new contract and returns the address of the deployed contract. This function may be useful if you want to write a universal contract that can deploy any contract.\n"
         ]
     },
     "tvm.code": {
