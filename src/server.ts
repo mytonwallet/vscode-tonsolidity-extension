@@ -194,28 +194,43 @@ documents.onDidClose(event => {
 
 function removeTmpFiles(event) {
     const fileNameId = Files.uriToFilePath(event.document.uri);
-    const fileDir = path.dirname(fileNameId);
-    let fileName  = path.basename(fileNameId);
-    fileName      = path.resolve(fileDir, "~" + fileName);
-    if (fs.existsSync(fileName)) {
-        fs.unlink(fileName, (error) => {
+    let fileDir = path.dirname(fileNameId);
+        fileDir = fileDir.replace(/\/contracts\//, "/.temp/");
+        fileDir = fileDir.replace(/\\contracts\\/, "\\.temp\\");
+        fileDir = fileDir.replace(/\/contracts$/, "/.temp");
+        fileDir = fileDir.replace(/\\contracts$/, "\\.temp");
+
+    let fileDirBuild = path.dirname(fileNameId);
+        fileDirBuild = fileDirBuild.replace(/\/contracts\//, "/build/");
+        fileDirBuild = fileDirBuild.replace(/\\contracts\\/, "\\build\\");
+        fileDirBuild = fileDirBuild.replace(/\/contracts$/, "/build");
+        fileDirBuild = fileDirBuild.replace(/\\contracts$/, "\\build");
+    const fileName  = path.basename(fileNameId);
+    const tmpFileName  = path.resolve(fileDir, "~" + fileName);
+    if (fs.existsSync(tmpFileName)) {
+        fs.unlink(tmpFileName, (error) => {
             if (error != null) {
                 console.error(JSON.stringify(error));
             }
         });
     }
-
-    if (fs.existsSync(fileName.replace(/\.[^/.]+$/, ".tvc"))) {
-        fs.rename(fileName.replace(/\.[^/.]+$/, ".tvc"),
-            fileNameId.replace(/\.[^/.]+$/, ".tvc"),
-            (err: Error) => err != null ? console.log(err): ""
+    if (fs.existsSync(tmpFileName.replace(/\.[^/.]+$/, ".tvc"))) {
+        if (!fs.existsSync(fileDirBuild)) {
+            fs.mkdirSync(fileDirBuild, { recursive: true });
+        }
+        fs.renameSync(tmpFileName.replace(/\.[^/.]+$/, ".tvc"),
+            path.resolve(fileDirBuild, fileName.replace(/\.[^/.]+$/, ".tvc"))
         );
+        const contentTvc = fs.readFileSync(path.resolve(fileDirBuild, fileName.replace(/\.[^/.]+$/, ".tvc")));
+        fs.writeFileSync(path.resolve(fileDirBuild, fileName.replace(/\.[^/.]+$/, ".base64")), Buffer.from(contentTvc).toString('base64'));
     }
 
-    if (fs.existsSync(fileName.replace(/\.[^/.]+$/, ".abi.json"))) {
-        fs.rename(fileName.replace(/\.[^/.]+$/, ".abi.json"),
-            fileNameId.replace(/\.[^/.]+$/, ".abi.json"),
-            (err: Error) => err != null ? console.log(err): ""
+    if (fs.existsSync(tmpFileName.replace(/\.[^/.]+$/, ".abi.json"))) {
+        if (!fs.existsSync(fileDirBuild)) {
+            fs.mkdirSync(fileDirBuild, { recursive: true });
+        }
+        fs.renameSync(tmpFileName.replace(/\.[^/.]+$/, ".abi.json"),
+            path.resolve(fileDirBuild, fileName.replace(/\.[^/.]+$/, ".abi.json"))
         );
     }
 }

@@ -379,7 +379,7 @@
             "name": "constant.language.time"
         },
         "constant-currency": {
-            "match": "\\b(nano|nanoton|nTon|ton|Ton|micro|microton|milli|milliton|kiloton|kTon|megaton|MTon|gigaton|GTon)\\b",
+            "match": "\\b(nano|nanoton|nanoever|nTon|ton|ever|Ton|Ever|micro|microton|microever|milli|milliton|milliever|kiloton|kiloever|kTon|kEver|megaton|megaever|MTon|MEver|gigaton|gigaever|GTon|GEver)\\b",
             "name": "constant.language.currency"
         },
         "number": {
@@ -438,7 +438,7 @@
         "type-primitive": {
             "patterns": [
                 {
-                    "begin": "\\b(TvmCell|TvmSlice|TvmBuilder|ExtraCurrencyCollection|optional|vector|address|ufixed(?:\\d*)?(?:x)?(?:\\d*)?|fixed(?:\\d*)?(?:x)?(?:\\d*)?|string\\d*|byte|bytes\\d*|int\\d*|uint\\d*|bool|hash\\d*)\\b(?:\\[\\])(\\()",
+                    "begin": "\\b(TvmCell|TvmSlice|TvmBuilder|ExtraCurrencyCollection|optional|vector|address|emptyMap|varInt|varInt16|varInt32|varUint|varUint16|varUint32|ufixed(?:\\d*)?(?:x)?(?:\\d*)?|fixed(?:\\d*)?(?:x)?(?:\\d*)?|string\\d*|byte|bytes\\d*|int\\d*|uint\\d*|bool|hash\\d*)\\b(?:\\[\\])(\\()",
                     "beginCaptures": {
                         "1": {
                             "name": "support.type.primitive"
@@ -461,7 +461,7 @@
                     ]
                 },
                 {
-                    "match": "\\b(TvmCell|TvmSlice|TvmBuilder|ExtraCurrencyCollection|optional|vector|address|ufixed(?:\\d*)?(?:x)?(?:\\d*)?|fixed(?:\\d*)?(?:x)?(?:\\d*)?|string\\d*|byte|bytes((1|2)?(1|2|3|4|5|6|7|8|9)|10|20|30|31|32)?|u?int(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?|bool|hash\\d*)\\b",
+                    "match": "\\b(TvmCell|TvmSlice|TvmBuilder|ExtraCurrencyCollection|optional|vector|address|emptyMap|varInt|varInt16|varInt32|varUint|varUint16|varUint32|ufixed(?:\\d*)?(?:x)?(?:\\d*)?|fixed(?:\\d*)?(?:x)?(?:\\d*)?|string\\d*|byte|bytes((1|2)?(1|2|3|4|5|6|7|8|9)|10|20|30|31|32)?|u?int(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?|bool|hash\\d*)\\b",
                     "name": "support.type.primitive"
                 }
             ]

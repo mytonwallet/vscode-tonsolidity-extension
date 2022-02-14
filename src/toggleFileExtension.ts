@@ -8,7 +8,7 @@ export function toggleFileExtension(rootDir: string) {
         if (files.length != 0) {
             for (let index in files) {
                 const filename = path.basename(files[index].fsPath);
-                if (filename.substr(0, 1) != '~') {
+                if (filename.substring(0, 1) != '~') {
                     let content = fs.readFileSync(files[index].fsPath);
                     const repalcedContent = content.toString().replace(/\.sol"/, ".tsol\"");
                     fs.writeFileSync(files[index].fsPath, repalcedContent);
@@ -25,7 +25,7 @@ export function toggleFileExtension(rootDir: string) {
             workspace.findFiles(path.join(rootDir,'/*.tsol')).then((files) => {
                 for(let index in files) {
                     const filename = path.basename(files[index].fsPath);
-                    if (filename.substr(0, 1) != '~') {
+                    if (filename.substring(0, 1) != '~') {
                         let content = fs.readFileSync(files[index].fsPath);
                         const repalcedContent = content.toString().replace(/\.tsol"/, ".sol\"");
                         fs.writeFileSync(files[index].fsPath, repalcedContent);

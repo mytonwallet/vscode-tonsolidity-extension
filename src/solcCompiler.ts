@@ -3,9 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { errorToDiagnostic } from './solErrorsToDiagnostics';
-import { Terminal, Component } from 'tondev';
+import { Terminal, Component } from 'everdev';
 import { ContractCollection } from './model/contractsCollection';
 import { initialiseProject } from './projectService';
+import { DebugConsoleMode } from 'vscode';
 
 const TOOL_FOLDER_NAME = "solidity";
 
@@ -39,8 +40,8 @@ const components = {
 export class SolcCompiler {
 
     public rootPath: string;
-    public _tondevTerminal: Terminal;
-    private tondevTerminalOutput = [];
+    public _everdevTerminal: Terminal;
+    private everdevTerminalOutput = [];
     
     constructor(rootPath: string) {
         this.rootPath = rootPath;
@@ -50,21 +51,21 @@ export class SolcCompiler {
         return typeof this.rootPath !== 'undefined' && this.rootPath !== null;
     }
    
-    public tondevTerminal(): Terminal {
-        if (!this._tondevTerminal) {
-            this._tondevTerminal = {
+    public everdevTerminal(): Terminal {
+        if (!this._everdevTerminal) {
+            this._everdevTerminal = {
                 log: (...args: any[]) => {
-                    this.tondevTerminalOutput.push(args.map((x) => `${x}`).join(""));
+                    this.everdevTerminalOutput.push(args.map((x) => `${x}`).join(""));
                 },
                 writeError: (text: string) => {
-                    this.tondevTerminalOutput.push(text);
+                    this.everdevTerminalOutput.push(text);
                 },
                 write: (text: string) => {
-                    this.tondevTerminalOutput.push(text);
+                    this.everdevTerminalOutput.push(text);
                 },
             };
         }
-        return this._tondevTerminal;
+        return this._everdevTerminal;
     }
 
     private async runCompilation(terminal: Terminal, args: {
@@ -116,37 +117,42 @@ export class SolcCompiler {
                 ["compile", codeName, "--lib", stdlib.path()],
             );
             const generatedTvcName = `${/Saved contract to file (.*)$/mg.exec(linkerOut)?.[1]}`;
-
-            await new Promise((res, rej) =>
-                fs.rename(path.resolve(fileDir, generatedTvcName),
-                    path.resolve(outputDir, tvcName),
-                    (err: Error) => (err ? rej(err) : res(true)),
-                ),
-            );
+            fs.renameSync(path.resolve(fileDir, generatedTvcName), path.resolve(outputDir, tvcName));
             fs.unlinkSync(path.resolve(fileDir, codeName));
         } catch(e) {
             //console.log(JSON.stringify(e));
         }
-        return this.tondevTerminalOutput;
+        return this.everdevTerminalOutput;
     }
 
     public async compile(contracts: any): Promise<any> {
         let rawErrors = [];
-        this.tondevTerminalOutput = [];
+        this.everdevTerminalOutput = [];
         for (let fileNameId in contracts.sources) {
             //need to create temporary file and remove after saving
             let fileName  = path.basename(fileNameId);
-            if (fileName.substr(0,1) == '~') { // we don't need to compile temp file
+            if (fileName.substring(0,1) == '~') { // we don't need to compile temp file
                 continue;
             }
-            const fileDir = path.dirname(fileNameId);
-            fileName      = path.resolve(fileDir, "~" + fileName);
+            let fileDir = path.dirname(fileNameId);
+                fileDir = fileDir.replace(/\/contracts\//, "/.temp/");
+                fileDir = fileDir.replace(/\\contracts\\/, "\\.temp\\");
+                fileDir = fileDir.replace(/\/contracts$/, "/.temp");
+                fileDir = fileDir.replace(/\\contracts$/, "\\.temp");
+
+            if (!fs.existsSync(fileDir)) {
+                fs.mkdirSync(fileDir, { recursive: true });
+            }
+            fileName = path.resolve(fileDir, "~" + fileName);
+            //need to replace the import definition on the file path with the most new content
+            contracts.sources[fileNameId].content = contracts.sources[fileNameId].content.replace(/(import +['"].*(?![^\/])\/)([^\.]*)(\.[^'"]*['"];)/g, (_, p1, p2, p3) => `${p1}~${p2}${p3}`);
+
             try {
                 fs.writeFileSync(fileName, contracts.sources[fileNameId].content, { flag: 'w' });
             } catch (err) {
                 //console.error(JSON.stringify(err));
             }
-            rawErrors = await this.runCompilation(this.tondevTerminal(), {"file": fileName});
+            rawErrors = await this.runCompilation(this.everdevTerminal(), {"file": fileName});
         }
         let outputErrors = [];
 
@@ -170,19 +176,22 @@ export class SolcCompiler {
                     const message = _er[1];
                     let sprep1 = er[1].replace(/ --> /g, "");
                     let prep1 = [];
-                    for( let k = 2; k >= 0 ; k--) {
+                    for ( let k = 2; k >= 0 ; k--) {
                         prep1.push(sprep1.substr(sprep1.lastIndexOf(":")+1));
                         sprep1 = sprep1.substr(0, sprep1.lastIndexOf(":"));
                     }
                     const file = String(sprep1).trim();
-                    const fileDir = path.dirname(file);
+                    let fileDir = path.dirname(file);
+                        fileDir = fileDir.replace(/\/.temp\//, "/contracts/");
+                        fileDir = fileDir.replace(/\/.temp$/, "/contracts");
+
                     let fileName: string;
                     if (fileDir == ".") {
-                        fileName  = file.substr(0, 1) === '~' ? file.substr(1): file;
+                        fileName  = file.substring(0, 1) === '~' ? file.substring(1): file;
                     } else {
                         fileName = String(path.basename(file)).trim();
                         //here 2 cases: from lint without ~ and from compiler with ~
-                        fileName = fileName.substr(0, 1) === '~' ? fileName.substr(1): fileName;
+                        fileName = fileName.substring(0, 1) === '~' ? fileName.substring(1): fileName;
                     }
 
                     const line = prep1[2];
@@ -205,17 +214,18 @@ export class SolcCompiler {
                 let sprep1 = er[1].replace(/  --> /g, "");
                 let prep1 = [];
                 for( let k = 2; k >= 0 ; k--) {
-                    prep1.push(sprep1.substr(sprep1.lastIndexOf(":")+1));
-                    sprep1 = sprep1.substr(0, sprep1.lastIndexOf(":"));
+                    prep1.push(sprep1.substring(sprep1.lastIndexOf(":")+1));
+                    sprep1 = sprep1.substring(0, sprep1.lastIndexOf(":"));
                 }
                 const file = sprep1;
                 const fileDir = path.dirname(file);
+                      fileDir.replace("/.temp/", "/contracts/");
                 let fileName: string;
                 if (fileDir == ".") {
-                    fileName  = file.substr(0, 1) === '~' ? file.substr(1): file;
+                    fileName  = file.substring(0, 1) === '~' ? file.substring(1): file;
                 } else {
                     fileName = path.basename(file);
-                    fileName = fileName.substr(0, 1) === '~' ? fileName.substr(1): fileName;
+                    fileName = fileName.substring(0, 1) === '~' ? fileName.substring(1): fileName;
                     fileName = path.resolve(fileDir, fileName);
                 }
                 const line = prep1[2];

@@ -1,6 +1,6 @@
 'use strict';
 
-import { OutputChannel, DiagnosticCollection, window, workspace } from 'vscode';
+import { OutputChannel, DiagnosticCollection, window } from 'vscode';
 import { SolcCompiler } from './solcCompiler';
 import { errorsToDiagnostics } from './solErrorsToDiaganosticsClient';
 

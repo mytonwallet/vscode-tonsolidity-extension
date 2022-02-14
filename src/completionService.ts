@@ -647,7 +647,7 @@ export class CompletionService {
 
 export function GetCompletionTypes(): CompletionItem[] {
     const completionItems = [];
-    const types = ['address', 'string', 'bytes', 'byte', 'int', 'uint', 'bool', 'hash'];
+    const types = ['address', 'string', 'bytes', 'byte', 'int', 'uint', 'bool', 'hash', 'varInt', 'varInt16', 'varInt32', 'varUint', 'varUint16', 'varUint32'];
     for (let index = 8; index <= 256; index += 8) {
         types.push('int' + index);
         types.push('uint' + index);
@@ -702,17 +702,18 @@ export function GetCompletionKeywords(): CompletionItem[] {
 
 export function GeCompletionUnits(): CompletionItem[] {
     const completionItems = [];
-    const etherUnits = ['nano', 'nanoton', 'nTon', 'ton', 'Ton', 'micro', 
-                        'microton', 'milli', 'milliton', 'kiloton', 'kTon', 
-                        'megaton', 'MTon', 'gigaton', 'GTon'];
-    etherUnits.forEach(unit => {
+    const everUnits = ['nano', 'nanoton', 'nanoever', 'nTon', 'ton', 'ever', 'Ton', 'Ever', 'micro', 
+                        'microton', 'microever', 'milli', 'milliton', 'milliever', 'kiloton', 'kiloever',
+                        'kTon', 'kEver', 'megaton', 'megaever', 'MTon', 'MEver', 'gigaton', 'gigaever',
+                        'GTon', 'GEver'];
+    everUnits.forEach(unit => {
         const completionItem =  CompletionItem.create(unit);
         completionItem.kind = CompletionItemKind.Unit;
-        completionItem.detail = unit + ': ether unit';
+        completionItem.detail = unit + ': ever/ton unit';
         completionItems.push(completionItem);
     });
 
-    const timeUnits = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'years'];
+    const timeUnits = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'years', 'now'];
     timeUnits.forEach(unit => {
         const completionItem =  CompletionItem.create(unit);
         completionItem.kind = CompletionItemKind.Unit;
@@ -1576,6 +1577,24 @@ function getTvmCompletionItems(): CompletionItem[] {
             label: 'accept',
         },
         {
+            detail: `
+            Executes TVM instruction "SETGASLIMIT" (TVM - A.11.2).
+            Sets current gas limit gl to the minimum of g and gm, and resets the gas credit gc to zero. If the gas consumed so far (including the present instruction) exceeds the resulting value of gl, an (unhandled) out of gas exception is thrown before setting new gas limits. Notice that tvm.setGasLimit(...) with an argument g ≥ 263 − 1 is equivalent to tvm.accept().
+            tvm.setGasLimit() is similar to tvm.accept(). tvm.accept() sets gas limit gl to the maximum possible value (depends on the network configuration parameters, usually is equal to 1_000_000 units of gas). tvm.setGasLimit() is generally used for accepting external messages and restricting max possible gas consumption. It may be used to protect from flood by "bad" owner in a contract that is used by multiple users. Let's consider some scenario:
+
+                Check whether msg.pubkey() != 0 and msg.pubkey() belongs to the list of trusted public keys;
+                Check whether m_floodCounter[msg.pubkey()] < 5 where m_floodCounter is count of pending operations of msg.pubkey() user.
+                tvm.setGasLimit(75_000); accept external message and set gas limit to 75_000.
+                ++m_floodCounter[msg.pubkey()]; increase count of pending operations for current users.
+                tvm.commit(); save current state if it needs
+                Do other things.
+
+            So if some user's public key will be stolen, then a hacker can spam with external messages and burn at most 5 * 75_000 units of gas instead of 5 * 1_000_000, because we use tvm.setGasLimit() instead of tvm.accept().
+            `,
+            kind: CompletionItemKind.Property,
+            label: 'setGasLimit',
+        },
+        {
             detail: 'Creates a "check point" of the state variables (by copying them from c7 to c4) and register c5. If the contract throws an exception at the computing phase then the state variables and register c5 will roll back to the "check point", and the computing phase will be considered "successful". If contract doesn`t throw an exception, it has no effect.',
             kind: CompletionItemKind.Property,
             label: 'commit',
@@ -1776,8 +1795,7 @@ function getTvmCompletionItems(): CompletionItem[] {
             detail: `Function should be used only offchain and intended to be used only in debot contracts. Allows creating an external inbound message, that calls the func function of the contract on address destination with specified function arguments.
 
             Mandatory parameters that are used to form a src address field that is used for debots:
-            
-            * abiVer - ABI version.
+
             * callbackId - identifier of the callback function.
             * onErrorId - identifier of the function that is called in case of error.
             * signBoxHandle - handle of the sign box entity, that engine will use to sign the message.
@@ -2058,32 +2076,18 @@ function getTvmBuilderCompletionItems(): CompletionItem[] {
 function getAbiCompletionItems(): CompletionItem[] {
     return [
         {
-            detail: 'encode(..) returs (bytes): ABI-encodes the given arguments',
+            detail: 'encode(TypeA a, TypeB b, ...) returs (TvmCell /*cell*/): creates cell from the values',
             insertText: 'encode(${1:arg});',
             insertTextFormat: 2,
             kind: CompletionItemKind.Method,
             label: 'encode',
         },
         {
-            detail: 'encodePacked(..) returns (bytes): Performes packed encoding of the given arguments',
-            insertText: 'encodePacked(${1:arg});',
+            detail: 'decode(TvmCell cell, (TypeA, TypeB, ...)) returns (TypeA /*a*/, TypeB /*b*/, ...): decodes the cell and returns the values. Note: all types must be set in abi.decode. Otherwise, abi.decode throws an exception.',
+            insertText: 'decode(${1:arg});',
             insertTextFormat: 2,
             kind: CompletionItemKind.Method,
-            label: 'encodePacked',
-        },
-        {
-            detail: 'encodeWithSelector(bytes4,...) returns (bytes): ABI-encodes the given arguments starting from the second and prepends the given four-byte selector',
-            insertText: 'encodeWithSelector(${1:bytes4}, ${2:arg});',
-            insertTextFormat: 2,
-            kind: CompletionItemKind.Method,
-            label: 'encodeWithSelector',
-        },
-        {
-            detail: 'encodeWithSignature(string,...) returns (bytes): Equivalent to abi.encodeWithSelector(bytes4(keccak256(signature), ...)`',
-            insertText: 'encodeWithSignature(${1:signatureString}, ${2:arg});',
-            insertTextFormat: 2,
-            kind: CompletionItemKind.Method,
-            label: 'encodeWithSignature',
+            label: 'decode',
         },
     ];
 }

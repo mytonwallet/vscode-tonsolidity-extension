@@ -1550,7 +1550,7 @@ const hoverDescription = {
     "tvm.buildExtMsg": {
         "pattern": "tvm.buildExtMsg",
         "type": "global",
-        "body": "tvm.buildExtMsg({\n\tdest: ${1:address},\n\ttime:${2:uint64},\n\texpire:${3:uint64},\n\tcall:{${4:functionIdentifier[, list_of_function_arguments]}},\n\tsign:${5:bool},\n\tpubkey:${6:optional(uint256)},\n\tabiVer:${7:uint8},\n\tcallbackId:${8:uint32},\n\tonErrorId:${9:uint32},\n\tstateInit:${10:TvmCell},\n\tsignBoxHandle:${11:optional(uint32)}\n\t\\});",
+        "body": "tvm.buildExtMsg({\n\tdest: ${1:address},\n\ttime:${2:uint64},\n\texpire:${3:uint64},\n\tcall:{${4:functionIdentifier[, list_of_function_arguments]}},\n\tsign:${5:bool},\n\tpubkey:${6:optional(uint256)},\n\tcallbackId:${7:uint32},\n\tonErrorId:${8:uint32},\n\tstateInit:${9:TvmCell},\n\tsignBoxHandle:${10:optional(uint32)}\n\t\\});",
         "description": [
             "```\nreturns (TvmCell);\n```\n",
             "Function should be used only offchain and intended to be used only in debot contracts. Allows creating an external inbound message, that calls the func function of the contract on address destination with specified function arguments.\n"

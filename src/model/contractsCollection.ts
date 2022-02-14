@@ -42,7 +42,8 @@ export class ContractCollection {
 
     public getContractsForCompilation(optimizeCompilation: boolean, optimizeCompilationRuns: number, outputSelection) {
         const contractsForCompilation = {};
-        this.contracts.forEach(contract => {
+        // we must to use reversed array, because imports must be handled before the basic smart contract code
+        this.contracts.reverse().forEach(contract => {
             contractsForCompilation[contract.absolutePath] = {content: contract.code};
         });
         const compilation = {
@@ -59,7 +60,6 @@ export class ContractCollection {
         };
         return compilation;
     }
-
 
     public addContractAndResolveImports(contractPath: string, code: string, project: Project) {
         const contract = this.addContract(contractPath, code);
