@@ -169,6 +169,14 @@ function startValidation() {
     }
 }
 
+documents.onDidOpen(event => {
+    const document = event.document;
+
+    if (!validatingDocument && !validatingAllDocuments) {
+        validate(document);
+    }
+});
+
 documents.onDidChangeContent(event => {
     const document = event.document;
 

@@ -145,7 +145,13 @@ export class SolcCompiler {
             }
             fileName = path.resolve(fileDir, "~" + fileName);
             //need to replace the import definition on the file path with the most new content
-            contracts.sources[fileNameId].content = contracts.sources[fileNameId].content.replace(/(import +['"].*(?![^\/])\/)([^\.]*)(\.[^'"]*['"];)/g, (_, p1, p2, p3) => `${p1}~${p2}${p3}`);
+            contracts.sources[fileNameId].content = contracts.sources[fileNameId].content.replace(/(import +['"].*(?![^\/])\/)([^\.]*)(\.[^'"]*['"];)/g, (source, p1, p2, p3) => {
+                if (p1.indexOf('node_modules') != -1) {
+                    return source;
+                } else {
+                    return `${p1}~${p2}${p3}`
+                }
+            });
 
             try {
                 fs.writeFileSync(fileName, contracts.sources[fileNameId].content, { flag: 'w' });
